@@ -1,19 +1,24 @@
 name: Deploy Docusaurus Site
+
 on:
   # Runs on pushes to the main branch
   push:
     branches: [main]
+  
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
+
 # Allow only one concurrent deployment
 concurrency:
   group: 'pages'
   cancel-in-progress: true
+
 jobs:
   # Build job
   build:
@@ -27,18 +32,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache-dependency-path: docu/package-lock.json
           cache: npm
       # Install dependencies
       - name: Install dependencies
         run: npm ci
-# Build the Docusaurus site
+        working-directory: docu
+      # Build the Docusaurus site
       - name: Build Docusaurus site
         run: npm run build
+        working-directory: docu
       # Upload artifact for deployment
       - name: Upload build artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build
+          path: ./docu/build
   # Deployment job
   deploy:
     environment:
